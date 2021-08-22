@@ -16,7 +16,7 @@ export class LocalStrategy extends PassportStrategy(Strategy){
     async validate(emailUsuario:string,passwordUsuario:string){
        
         const user= await this.authService.validateUser(emailUsuario,passwordUsuario);
-        if(!user)throw new UnauthorizedException(' El email o contraseña no coincide');
+        if(!user)throw new UnauthorizedException('Datos incorrectos o aún no estas autorizado para logearte');
         return user;
     }
 
