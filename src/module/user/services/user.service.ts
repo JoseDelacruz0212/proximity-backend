@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from 'src/entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
+import { EditUserDto } from '../dtos/edit-user.dto';
 export interface UserFindOne{
     idUsuario?:number;
     emailUsuario?:string;
@@ -22,10 +23,11 @@ export class UserService {
         }
         return list;
       }
-      async findById(id: number): Promise<Usuario> {
-        const usuario = await this.usuarioRepository.findOne(id);
+      async findById(id: number,usuarioEntity?:Usuario): Promise<Usuario> {
+        const usuario = await this.usuarioRepository.findOne(id)
+        .then(u => (!usuarioEntity ? u : !!u && usuarioEntity.idUsuario === u.idUsuario ? u : null));
         if (!usuario) {
-          throw new NotFoundException({ mesage: 'no existe' });
+          throw new NotFoundException({ mesage: 'Usuario no existe o no autorizado para realizar cambios' });
         }
         return usuario;
       }
@@ -41,30 +43,14 @@ export class UserService {
         return { message: `usuario ${nuevoUsuario.nombreUsuario} creado` };
       }
     
-      async update(id: number, dto: CreateUserDto): Promise<any> {
-        const usuario = await this.findById(id);
-        dto.nombreUsuario
-          ? (usuario.nombreUsuario = dto.nombreUsuario)
-          : (usuario.nombreUsuario = usuario.nombreUsuario);
-        dto.apellidoUsuario
-          ? (usuario.apellidoUsuario = dto.apellidoUsuario)
-          : (usuario.apellidoUsuario = usuario.apellidoUsuario);
-        dto.emailUsuario
-          ? (usuario.emailUsuario = dto.emailUsuario)
-          : (usuario.emailUsuario = usuario.emailUsuario);
-        dto.passwordUsuario
-          ? (usuario.passwordUsuario = dto.passwordUsuario)
-          : (usuario.passwordUsuario = usuario.passwordUsuario);
-        dto.estado?(usuario.estado=dto.estado)
-          : (usuario.estado=usuario.estado)
-        dto.roles 
-          ? (usuario.roles = dto.roles) 
-          :(usuario.roles = usuario.roles);
-        await this.usuarioRepository.save(usuario);
-        return { message: `usuario ${usuario.nombreUsuario} actualizado` };
+      async update(id: number, dto: EditUserDto,usuarioEntity?:Usuario): Promise<any> {
+        const usuario = await this.findById(id,usuarioEntity);
+        const editedUser = Object.assign(usuario, dto);
+        return await this.usuarioRepository.save(usuario);
+        //return { message: `usuario ${usuario.nombreUsuario} actualizado` };
       }
-      async delete(id: number): Promise<any> {
-        const usuario = await this.findById(id);
+      async delete(id: number,usuarioEntity?:Usuario): Promise<any> {
+        const usuario = await this.findById(id,usuarioEntity);
         await this.usuarioRepository.delete(usuario);
         return { message: `usuario ${usuario.nombreUsuario} eliminado` };
       }

@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsEmail, IsNotEmpty, IsNumberString, IsString } from "class-validator";
+import {  IsArray, IsBoolean, IsEmail, IsEnum, isEnum, IsNotEmpty,IsString } from "class-validator";
+import { AppRoles } from "src/app.roles";
 
 export class CreateUserDto {
     idUsuario?: number;
@@ -24,5 +25,9 @@ export class CreateUserDto {
     @IsBoolean()
     estado:boolean;
     @ApiProperty()
+    @IsArray()
+    @IsEnum(AppRoles,{
+        each:true
+    })
     roles: string[];
 }

@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AccessControlModule } from 'nest-access-control';
 import {
   DB_DATABASE,
   DB_HOST,
@@ -10,9 +11,11 @@ import {
   DB_PORT,
   DB_USER,
 } from './config/constants';
+
 import { UserModule } from './module/user/user.module';
 import { AuthModule } from './module/auth/auth.module';
 import { LugarModule } from './module/lugar/lugar.module';
+import { roles } from './app.roles';
 
 @Module({
   imports: [
@@ -35,7 +38,10 @@ import { LugarModule } from './module/lugar/lugar.module';
     }),
     inject: [ConfigService],
   }),
-  UserModule, AuthModule, LugarModule
+  AccessControlModule.forRoles(roles),
+  UserModule, 
+  AuthModule, 
+  LugarModule
 ],
 controllers: [AppController],
 providers: [AppService],

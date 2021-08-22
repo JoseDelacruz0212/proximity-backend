@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import {  SERVER_PORT } from './config/constants';
+import setDefaultUser from './config/default-user';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +17,7 @@ async function bootstrap() {
   .build();
   app.useGlobalPipes(new ValidationPipe());
   const configService = app.get(ConfigService);
+  setDefaultUser(configService);
   const port = parseInt(configService.get<string>(SERVER_PORT),10 )|| 3000;
 const document = SwaggerModule.createDocument(app, doc);
 SwaggerModule.setup('api', app, document);
