@@ -55,7 +55,11 @@ export class UserService {
         dto.passwordUsuario
           ? (usuario.passwordUsuario = dto.passwordUsuario)
           : (usuario.passwordUsuario = usuario.passwordUsuario);
-        dto.rolId ? (usuario.rolId = dto.rolId) : (usuario.rolId = usuario.rolId);
+        dto.estado?(usuario.estado=dto.estado)
+          : (usuario.estado=usuario.estado)
+        dto.roles 
+          ? (usuario.roles = dto.roles) 
+          :(usuario.roles = usuario.roles);
         await this.usuarioRepository.save(usuario);
         return { message: `usuario ${usuario.nombreUsuario} actualizado` };
       }

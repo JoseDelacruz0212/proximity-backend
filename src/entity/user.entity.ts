@@ -22,9 +22,10 @@ export class Usuario {
     @Column({ type: 'varchar', length: 250, nullable: false, select: false  })
     passwordUsuario: string;
     //definir estado
-
-    @Column({ type: 'int', nullable: false })
-    rolId: number;
+    @Column({ type: 'bool', default: true })
+    estado: boolean;
+    @Column({ type: 'simple-array' })
+    roles: string[];
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
